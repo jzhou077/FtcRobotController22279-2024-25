@@ -10,7 +10,7 @@ public class LConstants {
         ThreeWheelConstants.turnTicksToInches = .0029;
         ThreeWheelConstants.leftY = 7.6;
         ThreeWheelConstants.rightY = -7.6;
-        ThreeWheelConstants.strafeX = -3.25;
+        ThreeWheelConstants.strafeX = -3;
         ThreeWheelConstants.leftEncoder_HardwareMapName = "fL";
         ThreeWheelConstants.rightEncoder_HardwareMapName = "bR";
         ThreeWheelConstants.strafeEncoder_HardwareMapName = "fR";
@@ -19,7 +19,3 @@ public class LConstants {
         ThreeWheelConstants.strafeEncoderDirection = Encoder.REVERSE;
     }
 }
-
-
-
-
