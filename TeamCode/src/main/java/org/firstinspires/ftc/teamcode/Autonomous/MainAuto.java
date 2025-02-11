@@ -20,8 +20,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
-@Autonomous(name="Red Specimen Auto", group="Autonomous OpModes")
-public class RedSpecimenAuto extends OpMode {
+@Autonomous(name="Autonomous", group="Autonomous OpModes")
+public class MainAuto extends OpMode {
 
     private ServoEx arm, wrist, claw;
     private MotorEx lsUp, rsUp;
@@ -31,21 +31,21 @@ public class RedSpecimenAuto extends OpMode {
 
     private int pathState;
 
-    private final Pose startPose = new Pose(135, 72, Math.toRadians(0));
-    private final Pose scorePreloadPose = new Pose(110, 72, Math.toRadians(0)); //1
-    private final Pose push1Pose = new Pose(96, 108, Math.toRadians(0)); // 2
-    private final Pose push1ControlPose = new Pose(126, 106);
-    private final Pose push2Pose = new Pose(84, 118, Math.toRadians(0)); //3
-    private final Pose push2ControlPose = new Pose(67, 109);
-    private final Pose push3Pose = new Pose(134, 118, Math.toRadians(0)); //4
-    private final Pose push4Pose = new Pose(84, 130, Math.toRadians(0)); //5
-    private final Pose push4ControlPose = new Pose(79, 108);
-    private final Pose push5Pose = new Pose(134, 130, Math.toRadians(0)); //6
-    private final Pose prepGrabPose = new Pose(131, 130, Math.toRadians(180)); // 7
-    private final Pose reloadPose = new Pose(131, 114, Math.toRadians(180)); // 8
-    private final Pose scorePickup1Pose = new Pose(110, 75, Math.toRadians(0)); //9
-    private final Pose scorePickup2Pose = new Pose(110, 78, Math.toRadians(0)); // 11
-    private final Pose scorePickup3Pose = new Pose(110, 81, Math.toRadians(0)); // 13
+    private final Pose startPose = new Pose(9, 72, Math.toRadians(0));
+    private final Pose scorePreloadPose = new Pose(37, 72, Math.toRadians(0)); //1
+    private final Pose push1Pose = new Pose(47, 38, Math.toRadians(0)); // 2
+    private final Pose push1ControlPose = new Pose(16, 38);
+    private final Pose push2Pose = new Pose(60, 34, Math.toRadians(0)); //3
+    private final Pose push2ControlPose = new Pose(58, 35);
+    private final Pose push3Pose = new Pose(18, 34, Math.toRadians(0)); //4
+    private final Pose push4Pose = new Pose(60, 26, Math.toRadians(0)); //5
+    private final Pose push4ControlPose = new Pose(65, 36);
+    private final Pose push5Pose = new Pose(18, 26, Math.toRadians(0)); //6
+    private final Pose prepGrabPose = new Pose(17, 26, Math.toRadians(0)); // 7
+    private final Pose reloadPose = new Pose(17, 30, Math.toRadians(0)); // 8
+    private final Pose scorePickup1Pose = new Pose(34, 69, Math.toRadians(0)); //9
+    private final Pose scorePickup2Pose = new Pose(34, 66, Math.toRadians(0)); // 11
+    private final Pose scorePickup3Pose = new Pose(34, 63, Math.toRadians(0)); // 13
 
     private PathChain scorePreload, pushSamples, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, park;
     private boolean actionBusy = false;
@@ -58,14 +58,16 @@ public class RedSpecimenAuto extends OpMode {
 
         pushSamples = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(scorePreloadPose), new Point(push1ControlPose), new Point(push1Pose)))
-                .setConstantHeadingInterpolation(push1Pose.getHeading())
+                .setLinearHeadingInterpolation(scorePreloadPose.getHeading(), push1Pose.getHeading(), 1.5)
                 .addPath(new BezierCurve(new Point(push1Pose), new Point(push2ControlPose), new Point(push2Pose)))
                 .setConstantHeadingInterpolation(push2Pose.getHeading())
                 .addPath(new BezierLine(new Point(push2Pose), new Point(push3Pose)))
+                .setZeroPowerAccelerationMultiplier(1)
                 .setConstantHeadingInterpolation(push3Pose.getHeading())
                 .addPath(new BezierCurve(new Point(push3Pose), new Point(push4ControlPose), new Point(push4Pose)))
                 .setConstantHeadingInterpolation(push4Pose.getHeading())
                 .addPath(new BezierLine(new Point(push4Pose), new Point(push5Pose)))
+                .setZeroPowerAccelerationMultiplier(1)
                 .setConstantHeadingInterpolation(push5Pose.getHeading())
                 .addPath(new BezierLine(new Point(push5Pose), new Point(prepGrabPose)))
                 .setLinearHeadingInterpolation(push5Pose.getHeading(), prepGrabPose.getHeading())
@@ -110,8 +112,8 @@ public class RedSpecimenAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                arm.setPosition(ARM_SCORE_DOWN_POSITION);
-                wrist.setPosition(WRIST_UPSIDE_DOWN);
+//                arm.setPosition(ARM_SCORE_DOWN_POSITION);
+//                wrist.setPosition(WRIST_UPSIDE_DOWN);
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
@@ -120,53 +122,51 @@ public class RedSpecimenAuto extends OpMode {
                     if (!actionBusy) {
                         actionBusy = true;
                         actionTimer.resetTimer();
-                    } else if (actionTimer.getElapsedTimeSeconds() > 2) {
-                        vTargetHeight = HIGH_CHAMBER_POS;
-                        if (actionTimer.getElapsedTimeSeconds() > 4) {
-                            claw.setPosition(OPEN_CLAW);
-                            if (actionTimer.getElapsedTimeSeconds() > 5) {
-                                //                        follower.followPath(pushSamples);
+                    } else if (actionTimer.getElapsedTimeSeconds() > 1.5) {
+//                        vTargetHeight = HIGH_CHAMBER_POS;
+                        if (actionTimer.getElapsedTimeSeconds() > 1.75) {
+//                            claw.setPosition(OPEN_CLAW);
+                            if (actionTimer.getElapsedTimeSeconds() > 2) {
+                                follower.followPath(pushSamples);
                                 actionBusy = false;
-                                follower.followPath(park);
-                                vTargetHeight = 0;
                                 setPathState(2);
                             }
                         }
                     }
                 }
                 break;
-//            case 2:
-//                if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+            case 2:
+                if (pathTimer.getElapsedTimeSeconds() > 0.5) {
 //                    vTargetHeight = GRAB_SPECIMEN_HEIGHT;
 //                    arm.setPosition(ARM_GRAB_POSITION);
 //                    wrist.setPosition(WRIST_UPSIDE_UP);
-//                    setPathState(3);
-//                }
-//                break;
-//            case 3:
-//                if (!follower.isBusy()) {
-//                    follower.followPath(grabPickup1);
-//                    setPathState(4);
-//                }
-//                break;
-//            case 4:
-//                if (!follower.isBusy()) {
-//                    if (!actionBusy) {
-//                        actionBusy = true;
-//                        actionTimer.resetTimer();
-//                    } else if (actionTimer.getElapsedTimeSeconds() > 2) {
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                if (!follower.isBusy()) {
+                    follower.followPath(grabPickup1);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if (!follower.isBusy()) {
+                    if (!actionBusy) {
+                        actionBusy = true;
+                        actionTimer.resetTimer();
+                    } else if (actionTimer.getElapsedTimeSeconds() > 2) {
 //                        claw.setPosition(CLOSE_CLAW);
-//                        actionBusy = false;
-//                        setPathState(5);
-//                    }
-//                }
-//                break;
-//            case 5:
-//                if (pathTimer.getElapsedTimeSeconds() > 0.25) {
-//                    follower.followPath(scorePickup1);
-//                    setPathState(6);
-//                }
-//                break;
+                        actionBusy = false;
+                        setPathState(5);
+                    }
+                }
+                break;
+            case 5:
+                if (pathTimer.getElapsedTimeSeconds() > 0.25) {
+                    follower.followPath(scorePickup1);
+                    setPathState(6);
+                }
+                break;
 //            case 6:
 //                if (pathTimer.getElapsedTimeSeconds() > 0.5) {
 //                    arm.setPosition(ARM_SCORE_DOWN_POSITION);
